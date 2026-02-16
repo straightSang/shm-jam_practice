@@ -108,5 +108,4 @@ int main(){
     clean_shm(0); 
     return 0;
 
-
 }

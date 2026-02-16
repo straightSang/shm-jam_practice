@@ -31,7 +31,7 @@ int main(){
     // 혹은 0644, 0640이고, MAster와 Slave 가 같은 계정으로 실행되어야 함.
     //  fd 는 공유메모리 공간에 접근할 수 있는 열쇠. 같은 공유메모리여도 프로세스마다 fd 번호 다름.
     //int fd = shm_open(SHM_NAME, O_RDWR, 0666)
-    int fd = shm_open(SHM_NAME, O_RDONLY, 0); // 권한설정 무시,0넣기.
+    int fd = shm_open(SHM_NAME, O_RDWR, 0666); // 권한설정 무시,0넣기.
     // 
     // shm_open 은 인자를 3개만 받음. 읽기 전용일 때는 세번째 인자X.
     // shm_open RDONLY라면 mmap의 권한도 맞춰줘야 한다. PROT_READ
@@ -43,7 +43,7 @@ int main(){
     }
 
     // ---3. 메모리 매핑
-    struct jam_data *ptr = (struct jam_data*)mmap(NULL, sizeof(struct jam_data), PROT_READ, MAP_SHARED, fd, 0); 
+    struct jam_data *ptr = (struct jam_data*)mmap(NULL, sizeof(struct jam_data), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0); 
     //프로세스가 접근할 수 있는 범위&시작점,접근 크기
     // 읽기권한만 설정함 -> 읽기만 가능. 쓰려고 하는 순간 Segment Fault 발생.
 
@@ -60,14 +60,20 @@ int main(){
         pthread_rwlock_wrlock(&(ptr->rwlock)); // relock 잠금 획득
 
         ptr->signal_speed = test_signals[i];
+        ptr->crc32 = calculate_crc(ptr->signal_speed);
 
         printf("[Generator] 데이터 갱신 완료: %.2f (CRC: %u)\n", ptr->signal_speed, ptr->crc32);
 
         pthread_rwlock_unlock(&(ptr->rwlock));
 
+   
         // -----5. 신호 전송(Master 해제)
+
+        sem_post(&(ptr->sem_data)); // 한 신호가 끝날 때마다 해제???
+        sleep(1);
+
     }
-    sem_post(&(ptr->sem_data));
+   
     // 자원 해제
     // munmap: 메모리에접근X 알림.명시성 , 프로그램 확정성(exit(0))전 긴 코드 생성시. , mmap-munmap, open-close 의 관계. 자원할당-해제 맞춤: 버그 예방.
     munmap(ptr, sizeof(struct jam_data)); // munmap 은 분석(자식)프로세스에서 함. shm_unlink는 제어(부모)에서 함.
