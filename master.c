@@ -104,10 +104,9 @@ int main(){
         pthread_rwlock_unlock(&(ptr->rwlock)); // 읽기 쓰기 둘다 잠금 해제?
 // 읽기 전용 접근 잠금 해제. 다음 데이터가 데드락에 빠지지 않으려면 반드시 해제해야 함.
 // lock 에 맞춰서 unlock 해야 함.
-        clean_shm(0); // 
-        return 0;
-
     }
+    clean_shm(0); 
+    return 0;
 
 
 }
