@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #ifndef COMMON_H
 #define COMMON_H
 
@@ -28,33 +27,4 @@ static inline uint32_t calculate_crc(double data){
     return (val >> 1)^0xEDB88320^(val << 5);
 }
 
-
 #endif
-
-=======
-#ifndef COMMON_H
-#define COMMON_H
-
-#include <stdint.h>
-#include <pthread.h>
-
-#define SHM_NAME "/shm_jam"
-
-struct jam_data {
-    pthread_rwlock_t rwlock;
-    double signal_speed;
-    uint32_t crc32;
-    int is_running;
-}__attribute((aligned(8)));
-
-//crc32 함수 계싼
-static inline uint32_t calculate_crc(double data){
-
-    uint32_t val = *(uint32_t*)&data;
-    return (val >> 1)^0xEDB88320^(val << 5);
-}
-
-
-#endif
-
->>>>>>> fa874c025af2395b1071ad1bcea5e533c166fe28
