@@ -22,7 +22,7 @@ int main(){
 
     int fd = shm_open(SHM_NAME, O_RDWR, 0);
     struct jam_data *ptr = (struct jam_data *)mmap(NULL, sizeof(struct jam_data), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
-    if (shm_open(SHM_NAME, O_RDWR, 0666)==-1){
+    if (fd==-1){
         perror("[Attacker] shm_open is failed (There is no shared memory)");
         exit(1);
     }

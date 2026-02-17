@@ -53,7 +53,7 @@ int main(){
 
 
 // ------2. POSIX 공유 메모리 생성
-    int fd = shm_open(SHM_NAME, O_CREAT|O_RDWR, 0644); // 공유메모리에 대한 권한 설정
+    int fd = shm_open(SHM_NAME, O_CREAT|O_RDWR, 0666); // 공유메모리에 대한 권한 설정
     if (fd == -1) {perror("[Master]shm_open error"); exit(1);}
 
     // 2. 크기 설정 (처음 생성하면 크기가 0이라서 꼭 해야 함)
