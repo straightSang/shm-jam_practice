@@ -39,7 +39,9 @@ int main(){
     printf("[Attacker] 데이터 변조 중: 속도를 200.0 으로 변경(CRC 무시)\n");
     ptr->signal_speed = 200; // 속도변조
     // CRC 는 변조하지 않음으로써 데이터 무결성 오류를 유도함. 
-    // ?????
+
+    // ptr->crc32 = calculate_crc(200.00); -> crc 변조: 지능형 공격 / 스텔스
+    // 현실에서 crc를 변조하려면 crc에 사용된 알고리즘을 알아내서 계산해야 함.
 
     pthread_rwlock_unlock(&(ptr->rwlock));
 
